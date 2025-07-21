@@ -9,6 +9,8 @@ export default function ShopLayout({
 }) {
   return (
     <div className="min-h-screen">
+      
+
       <TopMenu />
       <SideBar />
 

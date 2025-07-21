@@ -2,19 +2,42 @@ export const revalidate = 10080;
 
 
 import { titleFont } from "@/app/config/fonts";
-import CantidadSelector from "@/components/product/cantidad-selector/CantidadSelector";
-import SideSelector from "@/components/product/size-selector/SideSelector";
 import { notFound } from "next/navigation";
 import ProductSlideshow from "../slideshow/ProductSlideshow";
 import ProductMobileSlideshow from "../slideshow/ProductMobileSlideshow";
 import { getProductBySlug } from "@/actions/products/get-product-by-slug";
+import { Metadata, ResolvingMetadata } from "next";
+import AddToCart from "./ui/AddToCart";
 
 
 interface Props {
-  params: Promise<{ slug?: string }>
+  params: Promise<{ slug: string }>
 }
 
 export const dynamicParams = false; //
+
+
+export async function generateMetadata(
+  { params }: Props,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+
+  const slug = (await params).slug
+
+  // fetch post information
+  const product = await getProductBySlug({ slug })
+
+  return {
+    title: product?.title ?? 'Producto no Encontrado',
+    description: product?.description ?? 'Descripcion no Disponible',
+    openGraph: {
+      title: product?.title ?? 'Producto no Encontrado',
+      description: product?.description ?? 'Descripcion no Disponible',
+      images: [`/products/${product?.images[1]}`]
+    }
+  }
+}
 
 
 export default async function ProductPage({ params }: Props) {
@@ -26,7 +49,7 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const product = await getProductBySlug({ slug });
-  console.log(product);
+  // console.log(product);
 
   if (!product) {
     notFound();
@@ -54,18 +77,7 @@ export default async function ProductPage({ params }: Props) {
         <h1 className={`${titleFont.className} antialiased font-bold text-xl`}>{product.title}</h1>
         <p className="text-lg mb-5">${product.price}</p>
 
-        {/* Selector de tallas */}
-        <SideSelector
-          selectedSize={product.sizes[0]}
-          availabeSizes={product.sizes}
-        />
-
-        {/* Selector de cantidad */}
-        <CantidadSelector cantidad={2} />
-
-
-        {/* Boton */}
-        <button className="btn-primary my-5 hover:cursor-pointer">Agregar al carrito</button>
+        <AddToCart  product={{ ...product, description: product.description ?? '' }} />
 
         {/* Descripcion */}
         <h3 className="font-bold text-sm">Descripcion</h3>

@@ -10,7 +10,7 @@ export default function Footer() {
           href="/"
         >
 
-          <span className={` ${titleFont.className} antialiased font-bold`}>Teslo</span>
+          <span className={` ${titleFont.className} antialiased font-bold`}>Cris</span>
           <span>  Shop</span>
           <span>  © {new Date().getFullYear()}</span>
         </Link>

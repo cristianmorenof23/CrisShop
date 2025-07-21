@@ -5,12 +5,27 @@ async function main () {
 
   await Promise.all([
     //1. borrar las tablas, usamos el promise.all para que se ejecute todo de manera simultanea y no de una en una
+    
+    prisma.orderAddress.deleteMany(),
+    prisma.orderItem.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.user.deleteMany(),
+    prisma.country.deleteMany(),
     prisma.productImage.deleteMany(),
     prisma.product.deleteMany(),
-    prisma.category.deleteMany()
+    prisma.category.deleteMany(),
   ])
 
-  const { categories, products } = initialData
+  const { categories, products, users, countrys } = initialData
+
+
+  await prisma.user.createMany({
+    data : users 
+  })
+
+  await prisma.country.createMany({
+    data : countrys
+  })
 
   //2. Empezar a generar categorias
   const categoriesData = categories.map( category => ({
